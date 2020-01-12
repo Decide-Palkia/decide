@@ -185,7 +185,7 @@ def export_to_xlsx(users):
 @staff_member_required
 def addCensus(request):
     id = request.POST.get("id")
-    votacion_id = request.POST.get("voting_id")
+    votacion_id = request.POST.get("votacion_id")
     votacion = get_object_or_404(Voting, pk=votacion_id)
     tipo = request.POST.get("tipo")
     if tipo == "usuario":
