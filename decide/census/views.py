@@ -151,37 +151,32 @@ def export_excel(request):
     if voting_id is '':
         voting_id = -1
 
-    census = list(Census.objects.all())
-    data = []
+    census = list(Census.objects.filter(voting_id=voting_id))
 
-    if request.GET.get('voting_id') is not None:
-        census = list(Census.objects.filter(voting_id=voting_id))
-
+    users = []
     for cen in census:
         user = list(User.objects.filter(pk=cen.voter_id))[0]
-        voting = list(Voting.objects.filter(pk=cen.voting_id))[0]
-        com = (user, voting)
-        data.append(com)
+        users.append(user.username)
 
-    template = export_to_xlsx(data)
+    template = export_to_xlsx(users)
 
-    return excel.make_response(template, "xlsx", file_name="census_data.xlsx")
+    voting = Voting.objects.filter(pk=voting_id)
+
+    return excel.make_response(template, "xlsx", file_name=voting.name + ".xlsx")
+
 
 @staff_member_required
-def export_to_xlsx(data):
+def export_to_xlsx(users):
     export = [[
         'Nombre',
         'Apellido',
         'Edad',
         'Sexo',
-        'Municipio',
-        'Votación', ]]
+        'Municipio']]
 
-    for d in data:
-        if hasattr(d[0], 'perfil'):
-            export.append(
-                [d[0].first_name, d[0].last_name, d[0].perfil.edad, d[0].perfil.sexo, d[0].perfil.municipio,
-                 str("/census/web/" + str(d[1].pk))])
+    for u in users:
+        if hasattr(u, 'perfil'):
+            export.append([u.first_name, u.last_name, u.perfil.edad, u.perfil.sexo, u.perfil.municipio])
 
     template = excel.pe.Sheet(export)
 
@@ -190,7 +185,7 @@ def export_to_xlsx(data):
 @staff_member_required
 def addCensus(request):
     id = request.POST.get("id")
-    votacion_id = request.POST.get("votacion_id")
+    votacion_id = request.POST.get("voting_id")
     votacion = get_object_or_404(Voting, pk=votacion_id)
     tipo = request.POST.get("tipo")
     if tipo == "usuario":
