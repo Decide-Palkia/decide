@@ -20,3 +20,4 @@ deploy:
   provider: heroku
   app: postproc-palkia
   strategy: git
+$ travis encrypt $(heroku auth:token) --add deploy.api_key
