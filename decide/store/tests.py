@@ -28,15 +28,15 @@ class StoreTextCase(BaseTestCase):
                              question=self.question,
                              start_date=timezone.now(),
         )
-        self.voting.save()"""
+        self.voting.save()
 
     def tearDown(self):
         super().tearDown()
 
-    """def gen_voting(self, pk):
+    def gen_voting(self, pk):
         voting = Voting(pk=pk, name='v1', question=self.question, start_date=timezone.now(),
                 end_date=timezone.now() + datetime.timedelta(days=1))
-        voting.save()"""
+        voting.save()
 
     def get_or_create_user(self, pk):
         user, _ = User.objects.get_or_create(pk=pk)
@@ -192,4 +192,4 @@ class StoreTextCase(BaseTestCase):
         self.voting.end_date = timezone.now() - datetime.timedelta(days=1)
         self.voting.save()
         response = self.client.post('/store/', data, format='json')
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 401)"""

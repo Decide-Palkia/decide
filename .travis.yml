@@ -4,24 +4,26 @@ services:
 addons:
   postgresql: '9.4'
 before_script:
+- cp decide/local_settings.travis.py decide/local_settings.py
 - psql -U postgres -c "create user decide password 'decide'"
-- psql -U postgres -c "create database test_decide owner decide"
 - psql -U postgres -c "ALTER USER decide CREATEDB"
+- psql -U postgres -c "create database decide owner decide"
 language: python
 python:
 - '3.6'
 install:
 - pip install -r requirements.txt
+- pip install codacy-coverage
 script:
 - cd decide
-- cp local_settings.travis.py local_settings.py
-- python ./manage.py test --keepdb
+- coverage run --branch --source=. ./manage.py test --keepdb
+- coverage xml
+- python-codacy-coverage -r coverage.xml
 deploy:
   provider: heroku
-  app: decide-palkia-voting
+  app: decide-palkia-django-integ
   strategy: git
-  api_key:
-    secure: OELjEYx3GZAxq6C9OHPVOr3jTPugnMosfcyRzdRuiOjR4eMDsE9p5q5LBibzB+a3IFta/iIllbYirc1FI61vXjHe9Fgd9U7yQpUImX07Cr8dlhaeXrKLmWn96xRlcs7+sMHR1ppskWA4X8YpcqiIQ6OAHFlLvFVbQVClxJ3rY4yAfR6npAS/NCsA3hiNYGeEkRxtsMmmQ6oSfmCGSmYwMRbc0YAvuSCVRkJE5zVemYDDU2vGAMS31WXYxUyQBmteCKFQmGBAAhbzCWVZWrMCmsBqNomNk04BgdiWylnUhp4UdmVV9naX25sBO7x5ioJ3aVZ48KMCgV1fk50m19XLyZtiFTMtEV/QelEs+OHIsYsxZS38EyKjzghGfHhhrYdRw1qvYsNI2yrFsTxy0+lSFgifvf5No7sa+un+47pqYZJULst6FN8fba0RWy+N8iV5IsT+mn5RrR5FnVxLZn7nGehIxBGiylnLcmuysm0jqrOZWi4oqQDBoM284NdGPk2Tc6rs0ghHMXJPKp87I0E14KR4YSKxTIU5qlr1tGFuOvUbAX5VzQ6r2yZlpuJ7ySqeGcGEYwCyYqlz0js81VoGsXzabiliIyV8+5yWdgs7ZhuMdMjnSj59yTgep9G+YAAy9c39CmENUfI5XDUAqjgA0pliXyUstrb3e82Y/L1Y/ds=
   on:
-    branch: voting-feature/candidatos
-
+    branch: master
+  api_key:
+    secure: ZogY+kuIQocp4bQiv+h3ydwP2T+cckvZyf4rkdjqPYYiCRCn0U9Aa1VTAzWh2W/TjfQYHWYLM2snK4NQqVhPJhWTo5X9lC1J+FwUixy70Yziv2Irr3vo5fVoUDN6frCKKN0pEQcp/rKOT6sCaeVVNBTciULERZ+aIeD0vmuZQwatyJfRiSS//eE4W+oDjFZhqeHm1PpOxphefJxxJ0IzeFxGwvUxR/2hSgsOC4qx2IsKfV2Zu4R6fPJ6FS7bQCqDI+b1ZFFokGfWx5hwKRMPR9ntNyVPwV99cmXYpgZFBnON2HRmz5lACBf59TgtoZSLuyqDassSd8rSh6JZ86T8fx08QM1X3kAKSgsoHrGG8mQWX3mVfJtsFNNsI4vuR4sFZNCfEEFmxv8WHIC89/5B8LhB9DviV+lWeroVesNl6/ZzRq1kCNsHuoiIdyqcFFSJF9tyJ1iEOxqNDIyQbrTl5jZoXVMZCHg41mDWV4axv0J83n7m8geR3of7aybT7ecjccM185jo+7HiiIA5r8+GJV1WFBdCqvzj8CZ9qqyX2KKi9seQtU+5V/xxKjBOZFFJDfso23Et7+wz5ynyq2KVmnFX+xwd992WK1e1V21XUX7zkZsn262Br2VGWQYAeR4WDtc8WS28GbBnspIySzeNt0LcKGLApDsAi3YuFkPRRAo=
