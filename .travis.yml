@@ -19,3 +19,11 @@ script:
 - coverage run --branch --source=. ./manage.py test --keepdb
 - coverage xml
 - python-codacy-coverage -r coverage.xml
+deploy:
+  provider: heroku
+  app: postproc-palkia
+  strategy: git
+   on:
+    branch: postproc-principal
+  api_key:
+    secure: b1/5A+eZetEJf40RmwM3kG4hu7S85rYeu/numo3dAOYFAshMzvwa63yOXi1akR6MC9PsKbGFlOLC1y8Ly2O2Cox/EV1cAymxBHK34bkfCmynZeQNe0bb9Gt1uwoKGGE864D2VhGsNCwkHqwZJJ2CKWCWR2jDwHTRgvteVlxha0desaEqaEt8xK6OsvtbhhQ7FcewY0Blo8IOUNay2WedDEn1BmaBefOSDalLlpNWUX6FqP/N27BEAYYG4NWFlmMv5pwsNVsOHaVTCOkmXpz1+s13t62k8j4/0xW20j8GaT5lafPwsC5I0stKfVI25qTrEH2lE01/g/3BN/yeELCSmy26MKCEEnFt/u7vjTqf01qAiZ50M2SOg9PQsyawVEw+ejkjipiR7tbr1DCdPYG3JWx7qqym6jO/PG2OA6M28H17MwAexETuaGHfWpRsXVu85983t/G5jUO6egAYTesHAp/r4f0b8nv0bne1R3WEEDWi7+3TH3Bg7EKyUdzvbhorUDKfNMa+dGDeILCErC+Ysvlb6GH56TNYYPKDfWZ+dwxIMlokY4B9E6ubPfPpwrj2nhIf1Xsgwp0N9k77ywnchPsz0wRhk+bqWOxK91/e6M7K+BN8ehWQpEx+Xy/EQoMOrqOIiZtE8tgHkjFdDO8rn/2zNHqsb1PN5tc9ZShrh7s=
