@@ -2,6 +2,7 @@ import random
 import itertools
 import re
 import os
+import markdown
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -320,6 +321,60 @@ class VotingTestCase(BaseTestCase):
 
         ################################################
 
+#TEST JUANMA
+    def csv_validation_primaries_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-primarias.csv"
+        with open(path, 'r') as archivo:
+            csv = archivo.read() 
+        c = Client()
+        data = {'param': csv, 'candidature_name': "prueba"}
+        request = c.post('/voting/validate/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        http_content = str(request.content.decode('utf-8'))
+        count_errors = http_content.count('El candidato Antonio no ha pasado el proceso de primarias')
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(count_errors == 1 and num_candidatos_inicial == num_candidatos_final)
+    
+    
+    def csv_validation_provincias_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-provincias.csv"
+        with open(path, 'r') as archivo:
+            csv = archivo.read() 
+        c = Client()
+        data = {'param': csv, 'candidature_name': "prueba"}
+        request = c.post('/voting/validate/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        http_content = str(request.content.decode('utf-8'))
+        count_errors = http_content.count('Tiene que haber al menos dos candidatos al congreso cuya provincia de nacimiento o de residencia tenga de código ML')
+
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(count_errors == 1 and num_candidatos_inicial == num_candidatos_final)
+
+    def csv_validation_formato_test(self):
+        num_candidatos_inicial = len(Candidate.objects.all())
+
+        path = str(os.getcwd()) + "/voting/files/candidatos-test-formato.csv"
+        with open(path, 'r') as archivo:
+            csv = archivo.read() 
+        c = Client()
+        data = {'param': csv, 'candidature_name': "prueba"}
+        request = c.post('/voting/validate/', data, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        http_content = str(request.content.decode('utf-8'))
+        count_errors = http_content.count('Error en la línea 2: Hay errores de formato/validación')
+
+        num_candidatos_final = len(Candidate.objects.all())
+        self.assertTrue(count_errors == 1)
+
+
+    def markdown_save_test(self):
+        voting = Voting(name="Prueba123456789", desc="# Esto no se tiene que guardar como html y se traduce usando librerias")
+        voting.save()
+        voting_saved = Voting.objects.get(name="Prueba123456789")
+        self.assertTrue(voting_saved.desc != markdown.markdown(voting_saved.desc))
+#FIN TEST JUANMA
+
 # class TestSignup(unittest.TestCase):
 
 #     def setUp(self):
@@ -330,7 +385,32 @@ class VotingTestCase(BaseTestCase):
 #         self.driver.find_element_by_id('id_username').send_keys("practica")
 #         self.driver.find_element_by_id('id_password').send_keys("practica")
         
-    
+#     #TEST JUANMA
+#     def markdown_voting_form_test(self):
+#         self.driver.get("http://localhost:8000/login/")
+#         self.driver.find_element_by_name('username').send_keys("equipo")
+#         self.driver.find_element_by_name('password').send_keys("decide1234")
+#         self.driver.find_element_by_id("submit_login").click()
+
+#         self.driver.get("http://localhost:8000/voting/edit/")
+#         self.driver.find_element_by_id('markdownText').send_keys("# Prueba de HTML")
+#         htmlRenderizado = self.driver.find_element_by_id('markdownRenderizado')
+#         print(htmlRenderizado.get_attribute("innerHTML"))
+#         self.assertTrue("<h1>Prueba de HTML</h1>" in htmlRenderizado.get_attribute("innerHTML"))
+
+#     def markdown_voting_form_test(self):
+#         self.driver.get("http://localhost:8000/login/")
+#         self.driver.find_element_by_name('username').send_keys("equipo")
+#         self.driver.find_element_by_name('password').send_keys("decide1234")
+#         self.driver.find_element_by_id("submit_login").click()
+
+
+#         self.driver.get("http://localhost:8000/voting/edit/")
+#         self.driver.find_element_by_id('markdownText').send_keys("# Prueba de HTML")
+#         self.driver.find_element_by_id("botonBorrar").click()
+#         self.assertTrue(self.driver.find_element_by_id('markdownText').text == "")
+# #FIN TEST JUANMA
+
 #     def tearDown(self):
 #         self.driver.quit
 

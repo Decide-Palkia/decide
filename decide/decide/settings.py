@@ -25,7 +25,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-BASEURL = 'http://decide-palkia-voting.herokuapp.com'
+BASEURL = 'https://decide-palkia-django-integ.herokuapp.com'
 
 APIS = {
     'authentication': BASEURL,
@@ -150,6 +150,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+os.environ['TZ']='Europe/Madrid'
 
 from django.utils.translation import ugettext_lazy as gettext
 LANGUAGE_CODE = 'es'
